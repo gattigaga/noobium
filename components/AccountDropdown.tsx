@@ -25,7 +25,7 @@ const AccountDropdown: React.FC<Props> = ({}) => {
             </Link>
           </li>
           <li className="mb-3">
-            <Link href="#">
+            <Link href="/my-articles">
               <a>
                 <p className="font-sans text-slate-900 text-xs">My Articles</p>
               </a>
