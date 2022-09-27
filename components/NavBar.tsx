@@ -8,9 +8,19 @@ import AccountDropdown from "./AccountDropdown";
 
 type Props = {
   hasSearchInput?: boolean;
+  hasSubmitButton?: boolean;
+  isSubmitDisabled?: boolean;
+  submitLabel?: string;
+  onClickSubmit?: () => void;
 };
 
-const NavBar: React.FC<Props> = ({ hasSearchInput = true }) => {
+const NavBar: React.FC<Props> = ({
+  hasSearchInput = true,
+  hasSubmitButton,
+  isSubmitDisabled,
+  submitLabel,
+  onClickSubmit,
+}) => {
   const [keyword, setKeyword] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
@@ -47,26 +57,41 @@ const NavBar: React.FC<Props> = ({ hasSearchInput = true }) => {
         </div>
       )}
 
-      {isLoggedIn && (
-        <div className="relative">
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            <img
-              className="w-10 h-10 rounded-full object-cover"
-              src="/images/dummy-avatar.png"
-              alt="John Doe"
-            />
-          </button>
+      <div className="flex items-center">
+        {hasSubmitButton && (
+          <>
+            <Button
+              type="button"
+              disabled={isSubmitDisabled}
+              onClick={onClickSubmit}
+            >
+              {submitLabel}
+            </Button>
+            <div className="w-6" />
+          </>
+        )}
 
-          {isDropdownOpen && <AccountDropdown />}
-        </div>
-      )}
-      {!isLoggedIn && (
-        <Link href="/auth/sign-in">
-          <a>
-            <Button>Sign In</Button>
-          </a>
-        </Link>
-      )}
+        {isLoggedIn && (
+          <div className="relative">
+            <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              <img
+                className="w-10 h-10 rounded-full object-cover"
+                src="/images/dummy-avatar.png"
+                alt="John Doe"
+              />
+            </button>
+
+            {isDropdownOpen && <AccountDropdown />}
+          </div>
+        )}
+        {!isLoggedIn && (
+          <Link href="/auth/sign-in">
+            <a>
+              <Button>Sign In</Button>
+            </a>
+          </Link>
+        )}
+      </div>
     </header>
   );
 };
