@@ -31,16 +31,27 @@ type Response = {
 };
 
 type Payload = {
-  search: string;
+  search?: string;
+  category?: string;
 };
 
 const action = async (page: number, payload?: Payload): Promise<Response> => {
-  const res = await axios.get("/articles", {
-    params: {
-      page,
-      ...payload,
-    },
-  });
+  let res;
+
+  if (payload?.category) {
+    res = await axios.get(`/categories/${payload.category}`, {
+      params: {
+        page,
+      },
+    });
+  } else {
+    res = await axios.get("/articles", {
+      params: {
+        page,
+        search: payload?.search,
+      },
+    });
+  }
 
   return res.data.data;
 };
