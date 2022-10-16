@@ -30,24 +30,29 @@ type Response = {
   per_page: number;
 };
 
-const action = async (page: number): Promise<Response> => {
+type Payload = {
+  search: string;
+};
+
+const action = async (page: number, payload?: Payload): Promise<Response> => {
   const res = await axios.get("/articles", {
     params: {
       page,
+      ...payload,
     },
   });
 
   return res.data.data;
 };
 
-const useArticlesQuery = () => {
+const useArticlesQuery = (payload?: Payload) => {
   return useInfiniteQuery(
-    ["articles"],
-    ({ pageParam = 1 }) => action(pageParam),
+    ["articles", payload],
+    ({ pageParam = 1 }) => action(pageParam, payload),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.current_page === lastPage.last_page) {
-          return undefined
+          return undefined;
         }
 
         return lastPage.current_page + 1;
