@@ -1,25 +1,60 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { parseISO, format } from "date-fns";
 
 import NavBar from "../../components/NavBar";
+import axios from "../../helpers/axios";
 
-const ArticleDetailPage: NextPage = () => {
-  const article = {
-    id: 1,
-    slug: "how-to-learn-redux",
-    title: "How to Learn Redux",
-    content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer et nibh egestas suspendisse nulla ipsum etiam gravida. Est eu, sed tortor in rutrum in. Egestas tincidunt sed venenatis faucibus sed. Arcu dictum lobortis pellentesque purus massa. Cras hendrerit blandit sed at. Euismod praesent ultrices sit cursus molestie ac. Amet, pellentesque interdum etiam tortor, dui. Quam cras quis condimentum amet, rhoncus diam, dictumst. Platea eu sodales vitae ipsum ac. Auctor etiam sagittis faucibus non pharetra elit.\n\nMalesuada massa pellentesque nunc diam neque. Consequat sollicitudin purus in egestas egestas commodo non tempus. Praesent lorem est, quis tincidunt varius. Quisque facilisis dignissim scelerisque nunc senectus rhoncus massa sollicitudin id.\n\nOrnare viverra neque vitae gravida habitasse tellus ultrices. Id blandit ut sed sed aliquam vitae. Eu nibh dignissim rutrum sit blandit. Quisque libero commodo, cursus est cursus. Cursus varius eget velit consectetur vel potenti.\n\nIpsum molestie erat laoreet in pharetra. Rhoncus, netus malesuada velit felis proin sem. Aliquet dictum sagittis a ornare lacus sed ut. Aenean vitae convallis in adipiscing. At dictumst sagittis, tincidunt pellentesque scelerisque pellentesque sem auctor. Ultricies urna sit in ac sed arcu turpis. Feugiat elit quam pulvinar elementum, turpis auctor ornare leo, neque.\n\nEst interdum sed amet integer libero tincidunt. Mauris, nunc sapien, donec placerat massa. Tellus proin tortor, hendrerit sed vitae. Lectus aliquet purus elementum at et. Adipiscing imperdiet lacus eget aenean risus egestas malesuada lobortis pulvinar.\n\nUt at rhoncus suspendisse non sed nec viverra. Cursus vitae adipiscing morbi vitae. Ultricies non neque, sed pulvinar sit amet, nunc. Bibendum vitae et ac cras nulla mi id amet. A viverra sed gravida id dictum.`,
-    thumbnail: "/images/dummy-article-thumbnail.png",
-    category: "Technology",
-    date: "2022-09-20 16:00:00",
-    author: {
-      name: "John Doe",
-      photo: "/images/dummy-avatar.png",
-    },
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  try {
+    const response = await axios.get(`/articles/${query.slug}`);
+
+    return {
+      props: {
+        article: response.data.data,
+      },
+    };
+  } catch (error: any) {
+    if (error.response.status === 404) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {},
+    };
+  }
+};
+
+type Props = {
+  article: {
+    id: number;
+    user_id: number;
+    category_id: number;
+    title: string;
+    slug: string;
+    content_preview: string;
+    content: string;
+    featured_image: string;
+    created_at: string;
+    updated_at: string;
+    category: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+    user: {
+      id: number;
+      name: string;
+      email: string;
+      picture: string;
+    };
   };
+};
 
-  const formattedDate = format(parseISO(article.date), "MMM dd");
+const ArticleDetailPage: NextPage<Props> = ({ article }) => {
+  const formattedDate = format(parseISO(article.created_at), "MMM dd");
 
   return (
     <div>
@@ -33,12 +68,12 @@ const ArticleDetailPage: NextPage = () => {
         <div className="flex items-center mb-8">
           <img
             className="w-12 h-12 rounded-full object-cover mr-4"
-            src={article.author.photo}
-            alt={article.author.name}
+            src={article.user.picture}
+            alt={article.user.name}
           />
           <div>
             <p className="text-sm font-sans text-slate-900 mb-1">
-              {article.author.name}
+              {article.user.name}
             </p>
             <p className="text-sm font-sans text-slate-400">{formattedDate}</p>
           </div>
@@ -48,16 +83,18 @@ const ArticleDetailPage: NextPage = () => {
           {article.title}
         </h1>
         <div className="px-3 bg-slate-200 rounded-full w-fit h-6 flex items-center mb-12">
-          <p className="text-slate-900 font-sans text-xs">{article.category}</p>
+          <p className="text-slate-900 font-sans text-xs">{article.category.name}</p>
         </div>
 
         <img
           className="w-full aspect-video object-cover mb-12"
-          src={article.thumbnail}
+          src={article.featured_image}
           alt={article.title}
         />
 
-        <p className="font-serif text-slate-900 whitespace-pre-line">{article.content}</p>
+        <p className="font-serif text-slate-900 whitespace-pre-line">
+          {article.content}
+        </p>
       </div>
     </div>
   );
