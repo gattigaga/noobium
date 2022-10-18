@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import Button from "./Button";
 import AccountDropdown from "./AccountDropdown";
+import useUserQuery from "../hooks/queries/use-user-query";
 
 type Props = {
   hasSearchInput?: boolean;
@@ -24,19 +25,15 @@ const NavBar: React.FC<Props> = ({
   const [keyword, setKeyword] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
+  const userQuery = useUserQuery();
 
-  const isLoggedIn = true;
+  const isLoggedIn = !!userQuery.data;
 
-  const user = {
-    fullname: "John Doe",
-    email: "john.doe@gmail.com",
-    photo: "/images/dummy-avatar.png",
-  };
-
-  const initialFullName = user.fullname
-    .split(" ")
-    .map((word) => word[0].toUpperCase())
-    .join("");
+  const initialFullName =
+    userQuery.data?.name
+      .split(" ")
+      .map((word) => word[0].toUpperCase())
+      .join("") || "";
 
   useEffect(() => {
     setKeyword((router.query.keyword as string) || "");
@@ -85,17 +82,19 @@ const NavBar: React.FC<Props> = ({
         {isLoggedIn && (
           <div className="relative">
             <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-              {!!user.photo && (
+              {!!userQuery.data?.picture && (
                 <img
                   className="w-10 h-10 rounded-full object-cover"
-                  src={user.photo}
-                  alt={user.fullname}
+                  src={userQuery.data.picture}
+                  alt={userQuery.data.name}
                 />
               )}
 
-              {!user.photo && (
+              {!userQuery.data?.picture && (
                 <div className="w-10 h-10 rounded-full bg-blue-800 flex justify-center items-center">
-                  <p className="font-bold font-sans text-white">{initialFullName}</p>
+                  <p className="font-bold font-sans text-white">
+                    {initialFullName}
+                  </p>
                 </div>
               )}
             </button>

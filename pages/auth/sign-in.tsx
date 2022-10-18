@@ -2,10 +2,15 @@ import Head from "next/head";
 import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Loading from "react-spinners/BeatLoader";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Button from "../../components/Button";
 import NavBar from "../../components/NavBar";
 import TextInput from "../../components/TextInput";
+import useSignInMutation from "../../hooks/mutations/use-sign-in-mutation";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -15,14 +20,29 @@ const SignInSchema = Yup.object().shape({
 });
 
 const SignInPage = () => {
+  const signInMutation = useSignInMutation();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: SignInSchema,
-    onSubmit: () => {
-      alert("Sign In successfully");
+    onSubmit: async (values) => {
+      try {
+        const response = await signInMutation.mutateAsync({
+          email: values.email,
+          password: values.password,
+        });
+
+        queryClient.setQueryData(["user"], response.user);
+        localStorage.setItem("access_token", response.access_token.token);
+        router.push("/");
+      } catch (error) {
+        toast.error("Email or password is invalid !");
+      }
     },
   });
 
@@ -33,50 +53,61 @@ const SignInPage = () => {
       </Head>
 
       <NavBar />
-      <div className="w-[400px] mx-auto py-24">
-        <h1 className="font-sans font-bold text-slate-900 text-5xl text-center mb-4">
-          Sign In
-        </h1>
-        <p className="font-sans text-slate-900 text-center mb-16">
-          Fill the form to sign in to your account.
-        </p>
+      {signInMutation.isLoading && (
+        <div className="h-screen flex justify-center items-center">
+          <Loading size={16} color="rgb(30 64 175)" />
+        </div>
+      )}
+      {!signInMutation.isLoading && (
+        <div className="w-[400px] mx-auto py-24">
+          <h1 className="font-sans font-bold text-slate-900 text-5xl text-center mb-4">
+            Sign In
+          </h1>
+          <p className="font-sans text-slate-900 text-center mb-16">
+            Fill the form to sign in to your account.
+          </p>
 
-        <TextInput
-          name="email"
-          label="Email Address"
-          type="text"
-          placeholder="Enter your email address"
-          value={formik.values.email}
-          hasError={!!formik.errors.email}
-          errorMessage={formik.errors.email}
-          onChange={formik.handleChange}
-        />
-        <div className="h-4" />
-        <TextInput
-          name="password"
-          label="Password"
-          type="password"
-          placeholder="Enter your password"
-          value={formik.values.password}
-          hasError={!!formik.errors.password}
-          errorMessage={formik.errors.password}
-          onChange={formik.handleChange}
-        />
-        <div className="h-10" />
+          <TextInput
+            name="email"
+            label="Email Address"
+            type="text"
+            placeholder="Enter your email address"
+            value={formik.values.email}
+            hasError={!!formik.errors.email}
+            errorMessage={formik.errors.email}
+            onChange={formik.handleChange}
+          />
+          <div className="h-4" />
+          <TextInput
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            value={formik.values.password}
+            hasError={!!formik.errors.password}
+            errorMessage={formik.errors.password}
+            onChange={formik.handleChange}
+          />
+          <div className="h-10" />
 
-        <Button size="large" isFullWidth onClick={() => formik.handleSubmit()}>
-          Sign In
-        </Button>
+          <Button
+            size="large"
+            isFullWidth
+            onClick={() => formik.handleSubmit()}
+          >
+            Sign In
+          </Button>
 
-        <p className="text-slate-900 font-sans text-sm text-center mt-8">
-          Don&lsquo;t have an account ?{" "}
-          <Link href="/auth/sign-up">
-            <a>
-              <span className="text-blue-800">Sign up here</span>
-            </a>
-          </Link>
-        </p>
-      </div>
+          <p className="text-slate-900 font-sans text-sm text-center mt-8">
+            Don&lsquo;t have an account ?{" "}
+            <Link href="/auth/sign-up">
+              <a>
+                <span className="text-blue-800">Sign up here</span>
+              </a>
+            </Link>
+          </p>
+        </div>
+      )}
     </div>
   );
 };
