@@ -4,15 +4,31 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, Fragment } from "react";
 import Loading from "react-spinners/BeatLoader";
+import toast from "react-hot-toast";
 
 import NavBar from "../../components/NavBar";
 import Article from "../../components/Article";
 import Button from "../../components/Button";
 import useMyArticlesQuery from "../../hooks/queries/use-my-articles-query";
+import useDeleteArticleMutation from "../../hooks/mutations/use-delete-article-mutation";
 
 const MyArticlesPage: NextPage = () => {
   const router = useRouter();
   const myArticlesQuery = useMyArticlesQuery();
+  const deleteArticleMutation = useDeleteArticleMutation();
+
+  const deleteArticle = async (articleId: number) => {
+    try {
+      await deleteArticleMutation.mutateAsync({
+        id: articleId,
+      });
+
+      myArticlesQuery.refetch();
+      toast.success("Delete an article successful !");
+    } catch (error) {
+      toast.error("Failed to delete an article !");
+    }
+  };
 
   useEffect(() => {
     const handler = () => {
@@ -79,6 +95,15 @@ const MyArticlesPage: NextPage = () => {
                       photo: article.user.picture,
                     }}
                     hasOptions
+                    onClickDelete={() => {
+                      const isConfirmed = confirm(
+                        "Are you sure you want to delete this article ?"
+                      );
+
+                      if (isConfirmed) {
+                        deleteArticle(article.id);
+                      }
+                    }}
                   />
                 ))}
               </Fragment>
