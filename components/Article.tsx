@@ -46,7 +46,7 @@ const Article: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center mb-8">
-        <div className="mr-10">
+        <div className="mr-10 flex-1">
           <Link href={url}>
             <a>
               <h1 className="font-sans text-slate-900 font-semibold text-2xl mb-4">
