@@ -6,11 +6,13 @@ import Loading from "react-spinners/BeatLoader";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 import Button from "../../components/Button";
 import NavBar from "../../components/NavBar";
 import TextInput from "../../components/TextInput";
 import useSignInMutation from "../../hooks/mutations/use-sign-in-mutation";
+import useGoogleSignInMutation from "../../hooks/mutations/use-google-sign-in-mutation";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -21,8 +23,10 @@ const SignInSchema = Yup.object().shape({
 
 const SignInPage = () => {
   const signInMutation = useSignInMutation();
+  const googleSignInMutation = useGoogleSignInMutation();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const refGoogleButton = useRef<HTMLDivElement>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -46,19 +50,51 @@ const SignInPage = () => {
     },
   });
 
+  const callback = async (googleResponse: any) => {
+    try {
+      const response = await googleSignInMutation.mutateAsync({
+        token: googleResponse.credential
+      });
+
+      queryClient.setQueryData(["user"], response.user);
+      localStorage.setItem("access_token", response.access_token.token);
+      router.push("/");
+    } catch (error) {
+      toast.error("Failed to sign in with google !");
+    }
+  }
+
+  useEffect(() => {
+    const clientId =
+      "633965568644-f3b18b07t2k1dsoiqdkiqkoi47kmjkj0.apps.googleusercontent.com";
+
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback,
+    })
+
+    google.accounts.id.renderButton(refGoogleButton.current, {
+      theme: "outline",
+      size: "large",
+      shape: "pill",
+      width: 400,
+    });
+  }, []);
+
   return (
     <div>
       <Head>
         <title>Sign In | Noobium</title>
+        <script src="https://accounts.google.com/gsi/client" async defer />
       </Head>
 
       <NavBar />
-      {signInMutation.isLoading && (
+      {signInMutation.isLoading || googleSignInMutation.isLoading && (
         <div className="h-screen flex justify-center items-center">
           <Loading size={16} color="rgb(30 64 175)" />
         </div>
       )}
-      {!signInMutation.isLoading && (
+      {!signInMutation.isLoading && !googleSignInMutation.isLoading && (
         <div className="w-[400px] mx-auto py-24">
           <h1 className="font-sans font-bold text-slate-900 text-5xl text-center mb-4">
             Sign In
@@ -97,6 +133,10 @@ const SignInPage = () => {
           >
             Sign In
           </Button>
+
+          <div className="border-b my-8" />
+
+          <div ref={refGoogleButton} />
 
           <p className="text-slate-900 font-sans text-sm text-center mt-8">
             Don&lsquo;t have an account ?{" "}
