@@ -43,6 +43,8 @@ const SignInPage = () => {
 
         queryClient.setQueryData(["user"], response.user);
         localStorage.setItem("access_token", response.access_token.token);
+        localStorage.setItem("access_token_generated_at", `${Date.now()}`);
+        localStorage.setItem("access_token_expired_at", `${Date.now() + 3600 * 1000}`);
         router.push("/");
       } catch (error) {
         toast.error("Email or password is invalid !");
@@ -58,6 +60,8 @@ const SignInPage = () => {
 
       queryClient.setQueryData(["user"], response.user);
       localStorage.setItem("access_token", response.access_token.token);
+      localStorage.setItem("access_token_generated_at", `${Date.now()}`);
+      localStorage.setItem("access_token_expired_at", `${Date.now() + 3600 * 1000}`);
       router.push("/");
     } catch (error) {
       toast.error("Failed to sign in with google !");
@@ -85,7 +89,6 @@ const SignInPage = () => {
     <div>
       <Head>
         <title>Sign In | Noobium</title>
-        <script src="https://accounts.google.com/gsi/client" async defer />
       </Head>
 
       <NavBar />
