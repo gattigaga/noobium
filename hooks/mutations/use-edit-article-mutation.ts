@@ -19,7 +19,7 @@ const action = async (payload: Payload): Promise<Response> => {
   form.append("_method", "PUT");
   form.append("title", payload.title);
   form.append("content", payload.content);
-  form.append("category_id", payload.category_id);
+  form.append("category_id", `${payload.category_id}`);
 
   if (payload.featured_image) {
     form.append("featured_image", payload.featured_image);
