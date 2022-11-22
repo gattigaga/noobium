@@ -68,11 +68,11 @@ const MyArticlesPage: NextPage = () => {
             My Articles
           </p>
           <Link href="/my-articles/create">
-            <a>
-              <Button type="button" size="large">
-                Write an Article
-              </Button>
-            </a>
+
+            <Button type="button" size="large">
+              Write an Article
+            </Button>
+
           </Link>
         </div>
 

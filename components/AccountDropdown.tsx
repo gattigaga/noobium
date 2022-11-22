@@ -44,16 +44,16 @@ const AccountDropdown: React.FC<Props> = ({}) => {
         <ul>
           <li className="mb-3">
             <Link href="/my-profile">
-              <a>
-                <p className="font-sans text-slate-900 text-xs">My Profile</p>
-              </a>
+
+              <p className="font-sans text-slate-900 text-xs">My Profile</p>
+
             </Link>
           </li>
           <li className="mb-3">
             <Link href="/my-articles">
-              <a>
-                <p className="font-sans text-slate-900 text-xs">My Articles</p>
-              </a>
+
+              <p className="font-sans text-slate-900 text-xs">My Articles</p>
+
             </Link>
           </li>
           <li>

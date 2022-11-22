@@ -179,9 +179,9 @@ const SignUpPage = () => {
           <p className="text-slate-900 font-sans text-sm text-center mt-8">
             Already have an account ?{" "}
             <Link href="/auth/sign-in">
-              <a>
-                <span className="text-blue-800">Sign in here</span>
-              </a>
+
+              <span className="text-blue-800">Sign in here</span>
+
             </Link>
           </p>
         </div>

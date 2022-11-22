@@ -52,11 +52,11 @@ const Home: NextPage = () => {
               </p>
               <div className="flex flex-wrap gap-3">
                 {categoriesQuery.data.map((category) => (
-                  <Link key={category.id} href={`/categories/${category.slug}`}>
-                    <a>
-                      <Category label={category.name} />
-                    </a>
-                  </Link>
+                  (<Link key={category.id} href={`/categories/${category.slug}`}>
+
+                    <Category label={category.name} />
+
+                  </Link>)
                 ))}
               </div>
             </>

@@ -25,11 +25,11 @@ const NotFoundPage: NextPage = () => {
           There&lsquo;s no content here.
         </p>
         <Link href="/">
-          <a>
-            <Button type="button" size="large">
-              Back to Home
-            </Button>
-          </a>
+
+          <Button type="button" size="large">
+            Back to Home
+          </Button>
+
         </Link>
       </div>
     </div>

@@ -48,11 +48,11 @@ const Article: React.FC<Props> = ({
       <div className="flex items-center mb-8">
         <div className="mr-10 flex-1">
           <Link href={url}>
-            <a>
-              <h1 className="font-sans text-slate-900 font-semibold text-2xl mb-4">
-                {title}
-              </h1>
-            </a>
+
+            <h1 className="font-sans text-slate-900 font-semibold text-2xl mb-4">
+              {title}
+            </h1>
+
           </Link>
           <p className="font-serif text-slate-900 text-sm">{content}</p>
         </div>
@@ -67,11 +67,11 @@ const Article: React.FC<Props> = ({
         {hasOptions && (
           <div className="flex items-center">
             <Link href={editURL || ''}>
-              <a>
-                <button className="mr-6" type="button">
-                  <MdOutlineModeEdit className="text-2xl text-slate-900" />
-                </button>
-              </a>
+
+              <button className="mr-6" type="button">
+                <MdOutlineModeEdit className="text-2xl text-slate-900" />
+              </button>
+
             </Link>
             <button type="button" onClick={onClickDelete}>
               <MdDeleteOutline className="text-2xl text-red-500" />

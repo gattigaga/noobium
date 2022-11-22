@@ -144,9 +144,9 @@ const SignInPage = () => {
           <p className="text-slate-900 font-sans text-sm text-center mt-8">
             Don&lsquo;t have an account ?{" "}
             <Link href="/auth/sign-up">
-              <a>
-                <span className="text-blue-800">Sign up here</span>
-              </a>
+
+              <span className="text-blue-800">Sign up here</span>
+
             </Link>
           </p>
         </div>

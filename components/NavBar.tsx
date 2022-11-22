@@ -58,9 +58,9 @@ const NavBar: React.FC<Props> = ({
   return (
     <header className="h-16 border-b border-slate-200 flex items-center justify-between px-24">
       <Link href="/">
-        <a>
-          <img src="/images/logo-with-text.svg" />
-        </a>
+
+        <img src="/images/logo-with-text.svg" />
+
       </Link>
 
       {hasSearchInput && (
@@ -119,11 +119,11 @@ const NavBar: React.FC<Props> = ({
           </div>
         )}
         {!isLoggedIn && (
-          <Link href="/auth/sign-in">
-            <a>
-              <Button>Sign In</Button>
-            </a>
-          </Link>
+          (<Link href="/auth/sign-in">
+
+            <Button>Sign In</Button>
+
+          </Link>)
         )}
       </div>
     </header>
